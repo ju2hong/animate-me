@@ -13,6 +13,11 @@ React로 개발한 애니메이션 추천 웹 시스템입니다.
 **AnimateMe**는 MyAnimeList 데이터를 기반으로 사용자에게 최적의 애니메이션을 추천해주는 웹 서비스입니다.  
 무료 Jikan API를 활용하여 실시간 애니메이션 정보를 제공합니다.
 
+## 📸 서비스 화면
+
+<img width="1224" height="800" alt="image" src="https://github.com/user-attachments/assets/d94d4db9-d69c-4a4c-8bea-35d36086e287" />
+
+
 ## ✨ 주요 기능
 
 | 기능         | 설명                                                |
