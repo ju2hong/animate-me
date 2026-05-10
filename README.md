@@ -1,16 +1,12 @@
 # 🎌 AnimateMe - 애니메이션 추천 시스템
 
-생성형 AI를 활용하여 React로 개발한 애니메이션 추천 웹 시스템입니다.
+React로 개발한 애니메이션 추천 웹 시스템입니다.
 
 ## 🌐 서비스 URL
 
-> AWS URL (세션 유효 시간 내 업데이트 예정)
+**https://main.d3uu9hlcbtviu6.amplifyapp.com/**
 
-## 🎬 시연 영상
-
-> YouTube 링크 (배포 후 업데이트 예정)
-
----
+> AWS Amplify로 호스팅 중입니다.
 
 ## 📖 시스템 소개
 
@@ -19,14 +15,14 @@
 
 ## ✨ 주요 기능
 
-| 기능 | 설명 |
-|------|------|
-| 🏆 인기 TOP | MyAnimeList 기준 상위 랭킹 애니메이션 목록 |
-| 🔍 검색 | 제목으로 애니메이션 실시간 검색 |
-| 🏷 장르 필터 | 액션, 로맨스, 판타지 등 20개 장르별 필터링 |
-| ♥ 즐겨찾기 | 관심 애니메이션 로컬 저장 및 관리 |
+| 기능         | 설명                                                |
+| ------------ | --------------------------------------------------- |
+| 🏆 인기 TOP  | MyAnimeList 기준 상위 랭킹 애니메이션 목록          |
+| 🔍 검색      | 제목으로 애니메이션 실시간 검색                     |
+| 🏷 장르 필터 | 액션, 로맨스, 판타지 등 20개 장르별 필터링          |
+| ♥ 즐겨찾기   | 관심 애니메이션 로컬 저장 및 관리                   |
 | 📋 상세 정보 | 평점, 줄거리, 제작사, 에피소드 수 등 상세 정보 모달 |
-| ▶ 트레일러 | YouTube 트레일러 링크 연결 |
+| ▶ 트레일러   | YouTube 트레일러 링크 연결                          |
 
 ## 🛠 기술 스택
 
@@ -70,17 +66,18 @@ Push to main
 
 ### GitHub Secrets 설정 항목
 
-| Secret 이름 | 설명 |
-|-------------|------|
-| `AWS_ACCESS_KEY_ID` | AWS Academy Access Key |
-| `AWS_SECRET_ACCESS_KEY` | AWS Academy Secret Key |
-| `AWS_SESSION_TOKEN` | AWS Academy Session Token |
-| `S3_BUCKET_NAME` | S3 버킷 이름 |
-| `CLOUDFRONT_DISTRIBUTION_ID` | CloudFront 배포 ID |
+| Secret 이름                  | 설명                      |
+| ---------------------------- | ------------------------- |
+| `AWS_ACCESS_KEY_ID`          | AWS Academy Access Key    |
+| `AWS_SECRET_ACCESS_KEY`      | AWS Academy Secret Key    |
+| `AWS_SESSION_TOKEN`          | AWS Academy Session Token |
+| `S3_BUCKET_NAME`             | S3 버킷 이름              |
+| `CLOUDFRONT_DISTRIBUTION_ID` | CloudFront 배포 ID        |
 
 > GitHub 저장소 → Settings → Secrets and variables → Actions 에서 설정
 
 ### 트리거 조건
+
 - `main` 브랜치에 push 시 자동 빌드 + 배포
 - PR 생성 시 빌드 + 린트 검사만 실행 (배포 제외)
 
