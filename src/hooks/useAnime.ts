@@ -16,7 +16,8 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
   throw new Error('429');
 }
 
-export function useTopAnime(page = 1) {
+export function useTopAnime() {
+  const [page, setPage] = useState(1);
   const [anime, setAnime] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,28 +25,30 @@ export function useTopAnime(page = 1) {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
 
     fetchWithRetry(`${BASE_URL}/top/anime?page=${page}&limit=20`)
       .then(r => r.json())
       .then((data: JikanResponse<Anime[]>) => {
         if (!cancelled) {
-          setAnime(data.data ?? []);
+          setAnime(prev => page === 1 ? (data.data ?? []) : [...prev, ...(data.data ?? [])]);
           setHasNext(data.pagination?.has_next_page ?? false);
+          setLoading(false);
+          setError(null);
         }
       })
       .catch(() => {
-        if (!cancelled) setError('데이터를 불러오지 못했습니다. 잠시 후 새로고침해주세요.');
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          setError('데이터를 불러오지 못했습니다. 잠시 후 새로고침해주세요.');
+        }
       });
 
     return () => { cancelled = true; };
   }, [page]);
 
-  return { anime, loading, error, hasNext };
+  const loadMore = useCallback(() => setPage(p => p + 1), []);
+
+  return { anime, loading, error, hasNext, loadMore };
 }
 
 export function useSearchAnime() {
@@ -59,22 +62,24 @@ export function useSearchAnime() {
       setResults([]);
       return;
     }
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams({ page: String(page), limit: '20' });
-      if (query.trim()) params.set('q', query.trim());
-      if (genreId) params.set('genres', String(genreId));
+    const params = new URLSearchParams({ page: String(page), limit: '20' });
+    if (query.trim()) params.set('q', query.trim());
+    if (genreId) params.set('genres', String(genreId));
 
-      const res = await fetchWithRetry(`${BASE_URL}/anime?${params}`);
-      const data: JikanResponse<Anime[]> = await res.json();
-      setResults(data.data ?? []);
-      setHasNext(data.pagination?.has_next_page ?? false);
-    } catch {
-      setError('검색 중 오류가 발생했습니다.');
-    } finally {
-      setLoading(false);
-    }
+    fetchWithRetry(`${BASE_URL}/anime?${params}`)
+      .then(r => r.json())
+      .then((data: JikanResponse<Anime[]>) => {
+        setResults(data.data ?? []);
+        setHasNext(data.pagination?.has_next_page ?? false);
+        setLoading(false);
+        setError(null);
+      })
+      .catch(() => {
+        setLoading(false);
+        setError('검색 중 오류가 발생했습니다.');
+      });
+
+    setLoading(true);
   }, []);
 
   return { results, loading, error, hasNext, search };
@@ -84,7 +89,6 @@ export function useGenres() {
   const [genres, setGenres] = useState<Genre[]>([]);
 
   useEffect(() => {
-    // Stagger genres request to avoid concurrent 429s
     const timer = setTimeout(() => {
       fetchWithRetry(`${BASE_URL}/genres/anime`)
         .then(r => r.json())

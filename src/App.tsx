@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import SearchBar from './components/SearchBar';
 import AnimeCard from './components/AnimeCard';
 import AnimeModal from './components/AnimeModal';
@@ -13,22 +13,12 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('top');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
-  const [topPage, setTopPage] = useState(1);
   const [selected, setSelected] = useState<Anime | null>(null);
-  const [allTopAnime, setAllTopAnime] = useState<Anime[]>([]);
 
-  const { anime: topAnime, loading: topLoading, error: topError, hasNext } = useTopAnime(topPage);
+  const { anime: topAnime, loading: topLoading, error: topError, hasNext, loadMore } = useTopAnime();
   const { results, loading: searchLoading, error: searchError, search } = useSearchAnime();
   const genres = useGenres();
   const { favorites, toggle } = useFavorites();
-
-  useEffect(() => {
-    if (topAnime.length) {
-      setAllTopAnime(prev =>
-        topPage === 1 ? topAnime : [...prev, ...topAnime]
-      );
-    }
-  }, [topAnime, topPage]);
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
@@ -50,15 +40,11 @@ export default function App() {
     }
   }, [search, searchQuery]);
 
-  const favoriteAnime = allTopAnime.filter(a => favorites.includes(a.mal_id));
+  const favoriteAnime = topAnime.filter(a => favorites.includes(a.mal_id));
 
   const isLoading = tab === 'top' ? topLoading : tab === 'search' ? searchLoading : false;
   const error = tab === 'top' ? topError : tab === 'search' ? searchError : null;
-
-  let displayAnime: Anime[] = [];
-  if (tab === 'top') displayAnime = allTopAnime;
-  else if (tab === 'search') displayAnime = results;
-  else displayAnime = favoriteAnime;
+  const displayAnime = tab === 'top' ? topAnime : tab === 'search' ? results : favoriteAnime;
 
   return (
     <div className="app">
@@ -125,7 +111,7 @@ export default function App() {
         )}
 
         {tab === 'top' && hasNext && !topLoading && (
-          <button className="load-more" onClick={() => setTopPage(p => p + 1)}>
+          <button className="load-more" onClick={loadMore}>
             더 보기
           </button>
         )}
